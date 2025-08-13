@@ -1,3 +1,5 @@
+# pdf_tools.py (Versi Optimal)
+
 import fitz  # PyMuPDF
 import re
 from pathlib import Path
@@ -5,7 +7,7 @@ from pathlib import Path
 def extract_pdf_fields(file_path):
     """
     Mengekstrak field dan nilainya dari teks PDF berdasarkan pola 'key: value'.
-    Dibuat lebih fleksibel untuk menangani berbagai format.
+    Menggunakan Regex yang dioptimalkan untuk fleksibilitas dan kebersihan data.
     """
     try:
         with fitz.open(file_path) as doc:
@@ -17,11 +19,10 @@ def extract_pdf_fields(file_path):
     if not text:
         return {}
     
-    # Regex untuk menemukan 'key' (mengizinkan angka) dan 'value'
-    # Key: 3-40 karakter, bisa huruf, angka, spasi, dan beberapa simbol.
-    # Value: Semua karakter sampai akhir baris.
-    pattern = r"(?:^|\n)\s*([A-Za-z0-9\s./()\-]{3,40}?)\s*[:：]\s*(.+)"
-    matches = re.findall(pattern, text)
+    # Regex Level 3: Paling fleksibel, tangguh, dan direkomendasikan.
+    # Menangkap 'key' sebagai teks apa pun yang bukan titik dua, dan 'value' dengan memangkas spasi di akhir.
+    pattern = r"(?:^|\n)\s*([^:\n]{3,40})\s*[:：]\s*(.+?)\s*$"
+    matches = re.findall(pattern, text, re.MULTILINE) # Tambahkan flag re.MULTILINE untuk efektivitas `^` dan `$`
     
     # Membersihkan hasil dan menghindari key/value yang kosong
     detected_fields = {key.strip(): value.strip() for key, value in matches if key.strip() and value.strip()}

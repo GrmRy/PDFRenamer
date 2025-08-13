@@ -1,32 +1,67 @@
-import fitz
-from pathlib import Path
+import fitz  # PyMuPDF
 import re
+from pathlib import Path
 
-def extract_text(pdf_path):
-    with fitz.open(pdf_path) as pdf:
-        return pdf[0].get_text()
+def extract_pdf_fields(file_path):
+    """
+    Mengekstrak field dan nilainya dari teks PDF berdasarkan pola 'key: value'.
+    Dibuat lebih fleksibel untuk menangani berbagai format.
+    """
+    try:
+        with fitz.open(file_path) as doc:
+            text = "".join(page.get_text("text") for page in doc)
+    except Exception as e:
+        print(f"Gagal membaca PDF {file_path}: {e}")
+        return {}
 
-def rename_pdf(original_path, new_name):
-    new_path = Path(original_path).with_name(new_name + Path(original_path).suffix)
-    Path(original_path).rename(new_path)
-    return new_path
+    if not text:
+        return {}
+    
+    # Regex untuk menemukan 'key' (mengizinkan angka) dan 'value'
+    # Key: 3-40 karakter, bisa huruf, angka, spasi, dan beberapa simbol.
+    # Value: Semua karakter sampai akhir baris.
+    pattern = r"(?:^|\n)\s*([A-Za-z0-9\s./()\-]{3,40}?)\s*[:：]\s*(.+)"
+    matches = re.findall(pattern, text)
+    
+    # Membersihkan hasil dan menghindari key/value yang kosong
+    detected_fields = {key.strip(): value.strip() for key, value in matches if key.strip() and value.strip()}
+    return detected_fields
 
-def process_pdfs(file_paths, pattern, progress_bar, log_area):
-    compiled_pattern = re.compile(pattern)
-    renamed_files = []
-    total = len(file_paths)
+def process_single_pdf(file_path, template):
+    """
+    Memproses satu file PDF berdasarkan template yang diberikan.
+    Mengembalikan (nama_file_baru, konten_asli_file) jika berhasil.
+    Mengembalikan (None, None) jika gagal.
+    """
+    fields_in_file = extract_pdf_fields(file_path)
+    if not fields_in_file:
+        return None, None
 
-    for i, file_path in enumerate(file_paths, start=1):
-        text = extract_text(file_path)
-        match = compiled_pattern.search(text)
-        if match:
-            new_name = match.group(1) if match.groups() else match.group(0)
-            renamed_path = rename_pdf(file_path, new_name)
-            renamed_files.append(renamed_path)
-            log_area.append(f"✅ {file_path} → {renamed_path.name}")
+    rules = template.get("aturan", [])
+    separator = template.get("pemisah", " - ")
+    new_name_parts = []
+
+    for rule in rules:
+        if rule in fields_in_file:
+            value = fields_in_file[rule]
+            # Membersihkan karakter ilegal dari nilai yang akan jadi nama file
+            clean_value = re.sub(r'[\\/*?:"<>|]', '-', value)
+            new_name_parts.append(clean_value)
         else:
-            log_area.append(f"⚠️ Tidak ditemukan match di {file_path}")
+            # Jika satu saja field dari aturan tidak ditemukan, proses file ini gagal
+            return None, None
 
-        progress_bar.setValue(int(i / total * 100))
+    if not new_name_parts:
+        return None, None
 
-    return renamed_files
+    # Semua field ditemukan, gabungkan menjadi nama file baru
+    new_name = separator.join(new_name_parts) + ".pdf"
+    
+    # Baca konten asli file untuk disimpan ke ZIP
+    try:
+        with open(file_path, 'rb') as f:
+            original_content = f.read()
+        return new_name, original_content
+    except Exception as e:
+        print(f"Gagal membaca konten file {file_path}: {e}")
+        return None, None

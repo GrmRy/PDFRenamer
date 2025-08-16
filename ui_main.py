@@ -1,5 +1,3 @@
-# ui_main.py (Enhanced with Input Validation & Better Error Handling)
-
 import sys
 from PyQt5.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QStackedWidget,

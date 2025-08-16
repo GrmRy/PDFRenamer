@@ -6,6 +6,8 @@ import shutil
 from datetime import datetime
 
 TEMPLATE_FILENAME = "pdf_renamer_templates.json"
+# --- TAMBAHKAN NAMA FILE KONFIGURASI BARU ---
+CONFIG_FILENAME = "pdf_renamer_config.json"
 BACKUP_DIR = "backups"
 MAX_BACKUP_FILES = 10
 
@@ -18,30 +20,49 @@ class ConfigError(Exception):
     pass
 
 def get_app_data_dir():
-    """
-    Get the appropriate directory for storing application data.
-    Creates the directory if it doesn't exist.
-    
-    Returns:
-        Path: Path to application data directory
-    """
     try:
-        # Use user's home directory for cross-platform compatibility
         app_dir = Path.home() / ".pdf_renamer"
         app_dir.mkdir(exist_ok=True)
-        
-        # Create subdirectories
         (app_dir / BACKUP_DIR).mkdir(exist_ok=True)
-        
         return app_dir
     except Exception as e:
-        # Fallback to current directory if can't create in home
         logging.warning(f"Cannot create app directory in home, using current directory: {e}")
         current_dir = Path.cwd() / ".pdf_renamer_data"
         current_dir.mkdir(exist_ok=True)
         (current_dir / BACKUP_DIR).mkdir(exist_ok=True)
         return current_dir
 
+# --- FUNGSI BARU UNTUK MENANGANI KONFIGURASI ---
+
+def get_config_file_path():
+    """Mendapatkan path lengkap ke file konfigurasi."""
+    return get_app_data_dir() / CONFIG_FILENAME
+
+def load_config():
+    """Memuat data konfigurasi (seperti save path) dari file JSON."""
+    config_file = get_config_file_path()
+    if not config_file.exists():
+        return {} # Kembalikan dict kosong jika file belum ada
+    try:
+        with open(config_file, 'r', encoding='utf-8') as f:
+            config_data = json.load(f)
+            return config_data
+    except (json.JSONDecodeError, Exception) as e:
+        logging.error(f"Gagal memuat file konfigurasi: {e}")
+        return {} # Kembalikan dict kosong jika ada error
+
+def save_config(config_data):
+    """Menyimpan data konfigurasi (seperti save path) ke file JSON."""
+    config_file = get_config_file_path()
+    try:
+        with open(config_file, 'w', encoding='utf-8') as f:
+            json.dump(config_data, f, indent=4)
+    except Exception as e:
+        logging.error(f"Gagal menyimpan file konfigurasi: {e}")
+        raise ConfigError(f"Gagal menyimpan konfigurasi: {e}")
+
+# ... (Sisa kode di utils.py tetap sama) ...
+# (load_templates, save_templates, dll.)
 def get_template_file_path():
     """Get the full path to the template file."""
     return get_app_data_dir() / TEMPLATE_FILENAME

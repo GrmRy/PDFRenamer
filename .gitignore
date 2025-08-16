@@ -19,3 +19,35 @@ build/PDF_Renamer_Pro_Enhanced/localpycs/pyimod04_pywin32.pyc
 build/PDF_Renamer_Pro_Enhanced/localpycs/struct.pyc
 dist/PDF_Renamer_Pro_Enhanced.exe
 dist/pdf_renamer.log
+PDF Renamer fix.spec
+PDF Renamer.spec
+build/PDF Renamer/Analysis-00.toc
+build/PDF Renamer/base_library.zip
+build/PDF Renamer/EXE-00.toc
+build/PDF Renamer/PDF Renamer.pkg
+build/PDF Renamer/PKG-00.toc
+build/PDF Renamer/PYZ-00.pyz
+build/PDF Renamer/PYZ-00.toc
+build/PDF Renamer/warn-PDF Renamer.txt
+build/PDF Renamer/xref-PDF Renamer.html
+build/PDF Renamer/localpycs/pyimod01_archive.pyc
+build/PDF Renamer/localpycs/pyimod02_importers.pyc
+build/PDF Renamer/localpycs/pyimod03_ctypes.pyc
+build/PDF Renamer/localpycs/pyimod04_pywin32.pyc
+build/PDF Renamer/localpycs/struct.pyc
+build/PDF Renamer fix/Analysis-00.toc
+build/PDF Renamer fix/base_library.zip
+build/PDF Renamer fix/EXE-00.toc
+build/PDF Renamer fix/PDF Renamer fix.pkg
+build/PDF Renamer fix/PKG-00.toc
+build/PDF Renamer fix/PYZ-00.pyz
+build/PDF Renamer fix/PYZ-00.toc
+build/PDF Renamer fix/warn-PDF Renamer fix.txt
+build/PDF Renamer fix/xref-PDF Renamer fix.html
+build/PDF Renamer fix/localpycs/pyimod01_archive.pyc
+build/PDF Renamer fix/localpycs/pyimod02_importers.pyc
+build/PDF Renamer fix/localpycs/pyimod03_ctypes.pyc
+build/PDF Renamer fix/localpycs/pyimod04_pywin32.pyc
+build/PDF Renamer fix/localpycs/struct.pyc
+dist/PDF Renamer fix.exe
+dist/PDF Renamer.exe

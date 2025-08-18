@@ -51,3 +51,35 @@ build/PDF Renamer fix/localpycs/pyimod04_pywin32.pyc
 build/PDF Renamer fix/localpycs/struct.pyc
 dist/PDF Renamer fix.exe
 dist/PDF Renamer.exe
+PDF Renamer fixx.spec
+build/PDF Renamer fixx/Analysis-00.toc
+build/PDF Renamer fixx/base_library.zip
+build/PDF Renamer fixx/EXE-00.toc
+build/PDF Renamer fixx/PDF Renamer fixx.pkg
+build/PDF Renamer fixx/PKG-00.toc
+build/PDF Renamer fixx/PYZ-00.pyz
+build/PDF Renamer fixx/PYZ-00.toc
+build/PDF Renamer fixx/warn-PDF Renamer fixx.txt
+build/PDF Renamer fixx/xref-PDF Renamer fixx.html
+build/PDF Renamer fixx/localpycs/pyimod01_archive.pyc
+build/PDF Renamer fixx/localpycs/pyimod02_importers.pyc
+build/PDF Renamer fixx/localpycs/pyimod03_ctypes.pyc
+build/PDF Renamer fixx/localpycs/pyimod04_pywin32.pyc
+build/PDF Renamer fixx/localpycs/struct.pyc
+dist/PDF Renamer fixx.exe
+PDF Renamer fix banget.spec
+build/PDF Renamer fix banget/Analysis-00.toc
+build/PDF Renamer fix banget/base_library.zip
+build/PDF Renamer fix banget/EXE-00.toc
+build/PDF Renamer fix banget/PDF Renamer fix banget.pkg
+build/PDF Renamer fix banget/PKG-00.toc
+build/PDF Renamer fix banget/PYZ-00.pyz
+build/PDF Renamer fix banget/PYZ-00.toc
+build/PDF Renamer fix banget/warn-PDF Renamer fix banget.txt
+build/PDF Renamer fix banget/xref-PDF Renamer fix banget.html
+build/PDF Renamer fix banget/localpycs/pyimod01_archive.pyc
+build/PDF Renamer fix banget/localpycs/pyimod02_importers.pyc
+build/PDF Renamer fix banget/localpycs/pyimod03_ctypes.pyc
+build/PDF Renamer fix banget/localpycs/pyimod04_pywin32.pyc
+build/PDF Renamer fix banget/localpycs/struct.pyc
+dist/PDF Renamer fix banget.exe

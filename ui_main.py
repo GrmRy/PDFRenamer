@@ -8,6 +8,7 @@ from PyQt5.QtCore import QThread, pyqtSignal, Qt
 from PyQt5.QtGui import QFont
 from pathlib import Path
 import logging
+import datetime
 
 from pdf_tools import (extract_pdf_fields, process_single_pdf, validate_pdf_file, 
                       validate_template_name, FileValidationError, PDFProcessingError)
@@ -216,7 +217,7 @@ class PDFRenamerApp(QMainWindow):
     def create_dashboard_page(self):
         widget = QWidget()
         layout = QVBoxLayout(widget)
-        title = QLabel("Selamat Datang di PDF Renamer Pro!")
+        title = QLabel("Selamat Datang di PDF Renamer!")
         title.setFont(QFont("Arial", 20, QFont.Bold))
         layout.addWidget(title)
 
@@ -347,13 +348,11 @@ class PDFRenamerApp(QMainWindow):
         scroll_area.setWidgetResizable(True)
         return scroll_area
     
-    # --- FUNGSI BARU UNTUK HALAMAN PENGATURAN ---
     def create_settings_page(self):
         widget = QWidget()
         layout = QVBoxLayout(widget)
         layout.setSpacing(20)
 
-        # Grup 1: Lokasi Penyimpanan
         save_group = QGroupBox("Lokasi Penyimpanan Default")
         save_layout = QVBoxLayout(save_group)
         
@@ -371,13 +370,10 @@ class PDFRenamerApp(QMainWindow):
         path_layout.addWidget(browse_btn)
         save_layout.addLayout(path_layout)
         layout.addWidget(save_group)
-
-        # Tambahkan grup lain di sini jika diperlukan (misal: tema, backup)
         
         layout.addStretch()
         return widget
     
-    # --- FUNGSI LOGIKA BARU UNTUK PENGATURAN ---
     def set_default_save_location(self):
         """Membuka dialog untuk memilih folder dan menyimpannya."""
         folder = QFileDialog.getExistingDirectory(self, "Pilih Folder Penyimpanan Default", self.default_save_path)
@@ -391,7 +387,6 @@ class PDFRenamerApp(QMainWindow):
             except ConfigError as e:
                 ValidationUtils.show_message(self, "Error", f"Gagal menyimpan pengaturan: {e}", QMessageBox.Critical)
 
-    # --- MODIFIKASI FUNGSI run_bulk_process ---
     def run_bulk_process(self):
         current_text = self.process_combo.currentText()
         template_name = current_text.replace("⚙️ ", "").strip()
@@ -406,9 +401,8 @@ class PDFRenamerApp(QMainWindow):
         elif template_name not in self.built_in_templates:
             ValidationUtils.show_message(self, "Template Tidak Valid", "Silakan pilih template yang valid.", QMessageBox.Warning)
             return
-            
-        # --- GUNAKAN LOKASI DEFAULT DI SINI ---
-        default_filename = os.path.join(self.default_save_path, f"Hasil Rename ({template_name}).zip")
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")    
+        default_filename = os.path.join(self.default_save_path, f"Hasil Rename ({template_name})({timestamp}).zip")
         save_path, _ = QFileDialog.getSaveFileName(self, "Simpan Hasil ke ZIP", default_filename, "Zip Files (*.zip)")
         
         if not save_path: return
@@ -424,9 +418,8 @@ class PDFRenamerApp(QMainWindow):
         self.worker.error.connect(self.on_bulk_process_error)
         self.worker.start()
 
-    # --- SISA FUNGSI (TIDAK BERUBAH) ---
     def update_manager_combo(self):
-        # ... (Sama seperti sebelumnya)
+
         self.manager_combo.blockSignals(True)
         self.manager_combo.clear()
         self.manager_combo.addItem("-- Buat Template Baru --")
@@ -440,7 +433,6 @@ class PDFRenamerApp(QMainWindow):
         self.load_template_for_editing(self.manager_combo.currentText())
 
     def load_template_for_editing(self, current_text):
-        # ... (Sama seperti sebelumnya)
         template_name = current_text.replace("⚙️ ", "").strip()
         is_built_in = template_name in self.built_in_templates
         is_custom = template_name in self.templates
@@ -467,7 +459,6 @@ class PDFRenamerApp(QMainWindow):
             self.manager_separator_input.setText(" - ")
 
     def save_template(self):
-        # ... (Sama seperti sebelumnya)
         template_name = self.manager_template_name.text().strip()
         is_valid, error_msg = validate_template_name(template_name)
         if not is_valid:
@@ -490,7 +481,6 @@ class PDFRenamerApp(QMainWindow):
             ValidationUtils.show_message(self, "Error", f"Gagal menyimpan: {e}", QMessageBox.Critical)
 
     def delete_template(self):
-        # ... (Sama seperti sebelumnya)
         current_text = self.manager_combo.currentText()
         if not current_text or current_text.startswith("⚙️") or current_text not in self.templates:
             ValidationUtils.show_message(self, "Info", "Pilih template kustom untuk dihapus.", QMessageBox.Warning)
@@ -504,7 +494,6 @@ class PDFRenamerApp(QMainWindow):
             self.update_all_combos()
 
     def update_process_combo(self):
-        # ... (Sama seperti sebelumnya)
         self.process_combo.blockSignals(True)
         self.process_combo.clear()
         if self.built_in_templates:
@@ -517,7 +506,7 @@ class PDFRenamerApp(QMainWindow):
         self.update_process_format_label(self.process_combo.currentText())
 
     def update_process_format_label(self, current_text):
-        # ... (Sama seperti sebelumnya)
+
         template_name = current_text.replace("⚙️ ", "").strip()
         if template_name in self.built_in_templates:
             self.process_format_label.setText(f"<b>Format:</b> Otomatis untuk '{template_name}'")
@@ -529,37 +518,37 @@ class PDFRenamerApp(QMainWindow):
             self.process_format_label.setText("Pilih template terlebih dahulu")
 
     def stop_bulk_process(self):
-        # ... (Sama seperti sebelumnya)
+
         if self.worker and self.worker.isRunning():
             self.worker.stop()
             self.process_log.append("⏹️ Proses dihentikan...")
 
     def on_bulk_process_finished(self, save_path, success, total):
-        # ... (Sama seperti sebelumnya)
+
         self.process_run_btn.setEnabled(True)
         self.process_stop_btn.setEnabled(False)
         ValidationUtils.show_message(self, "Proses Selesai", f"Proses selesai! {success}/{total} file berhasil diproses.\nDisimpan di: {save_path}")
 
     def on_bulk_process_error(self, message):
-        # ... (Sama seperti sebelumnya)
+
         self.process_run_btn.setEnabled(True)
         self.process_stop_btn.setEnabled(False)
         ValidationUtils.show_message(self, "Error", f"Terjadi kesalahan: {message}", QMessageBox.Critical)
 
     def select_bulk_files(self):
-        # ... (Sama seperti sebelumnya)
+
         files, _ = QFileDialog.getOpenFileNames(self, "Pilih File PDF", "", "PDF Files (*.pdf)")
         if files:
             self.uploaded_files.extend(files)
             self.process_file_list.addItems([Path(f).name for f in files])
 
     def clear_selected_files(self):
-        # ... (Sama seperti sebelumnya)
+
         self.uploaded_files.clear()
         self.process_file_list.clear()
 
     def detect_fields_from_sample(self):
-        # ... (Sama seperti sebelumnya)
+
         file_path, _ = QFileDialog.getOpenFileName(self, "Pilih PDF Contoh", "", "PDF Files (*.pdf)")
         if not file_path: return
         is_valid, msg = validate_pdf_file(file_path)
@@ -578,7 +567,7 @@ class PDFRenamerApp(QMainWindow):
             ValidationUtils.show_message(self, "Error Ekstraksi", str(e), QMessageBox.Warning)
             
     def update_rules_from_checkbox(self, item):
-        # ... (Sama seperti sebelumnya)
+
         field_name = item.text().split(":")[0].strip()
         if item.checkState() == Qt.Checked:
             if not self.manager_rules_list.findItems(field_name, Qt.MatchExactly):
@@ -588,13 +577,13 @@ class PDFRenamerApp(QMainWindow):
                 self.manager_rules_list.takeItem(self.manager_rules_list.row(found_item))
 
     def update_all_combos(self):
-        # ... (Sama seperti sebelumnya)
+
         self.update_manager_combo()
         self.update_process_combo()
         self.update_stats_label()
         
     def update_stats_label(self):
-        # ... (Sama seperti sebelumnya)
+
         total_templates = len(self.templates) + len(self.built_in_templates)
         self.stats_label.setText(f"Total Template Tersedia: {total_templates} ({len(self.built_in_templates)} bawaan, {len(self.templates)} kustom)")
 
